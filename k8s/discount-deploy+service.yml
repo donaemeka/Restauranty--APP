@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discounts-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-discounts
+  template:
+    metadata:
+      labels:
+        app: backend-discounts
+    spec:
+      containers:
+      - name: backend-discounts
+        image: donaemeka/discounts:latest
+        ports:
+        - containerPort: 3002
+        env:
+        # Database Configuration
+        - name: MONGODB_URI_DISCOUNTS
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: MONGODB_URI_DISCOUNTS
+        - name: DB_HOST
+          value: "mongo-service"
+        - name: DB_PORT
+          value: "27017"
+        
+        # Application Secrets
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: SECRET
+        
+        # Cloudinary Configuration
+        - name: CLOUD_NAME
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: CLOUD_NAME
+        - name: CLOUD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: CLOUD_API_KEY
+        - name: CLOUD_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: CLOUD_API_SECRET
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discounts-service
+spec:
+  selector:
+    app: backend-discounts
+  ports:
+    - port: 3002
+      targetPort: 3002
