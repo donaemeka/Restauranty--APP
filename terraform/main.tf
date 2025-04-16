@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+provider "azurerm" {
+  features {}
+}
+
+>>>>>>> 3aafa9e4130f4fc5cd8c845c3cfbd4234295cecd
 resource "azurerm_resource_group" "aks_rg" {
   name     = var.resource_group_name    
   location = var.location
