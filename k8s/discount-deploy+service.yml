@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discounts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discounts
+  template:
+    metadata:
+      labels:
+        app: discounts
+    spec:
+      containers:
+        - name: discounts
+          image:  donaemeka/discounts:latest
+          ports:
+            - containerPort: 3002
+          env:
+            SECRET: ${{ secrets.SECRET }}
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+            CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
+            CLOUD_API_KEY: ${{ secrets.CLOUD_API_KEY }}
+            CLOUD_API_SECRET: ${{ secrets.CLOUD_API_SECRET }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discounts
+spec:
+  selector:
+    app: discounts
+  ports:
+    - port: 3002
+      targetPort: 3002
